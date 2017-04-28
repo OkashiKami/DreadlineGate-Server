@@ -43,13 +43,14 @@ namespace Dreadline_Gate_Server
             {
                 Program.server.socket.Bind(Program.server.endpoint);
             }
-            catch
+            catch(Exception e)
             {
                 Console.Write("Connection: ");
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("ERROR");
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine(", Connecting to server Failed... (E:805:655)");
+                Console.WriteLine("ERROR [803]: " + e.Message);
             }
             Thread.Sleep(500);
             if (Program.server.socket.IsBound)
@@ -117,8 +118,9 @@ namespace Dreadline_Gate_Server
             {
                 socket.Send(Encoder.Genarate("logininfo=INFO-" + message + "|"));
             }
-            catch
+            catch(Exception e)
             {
+                Console.WriteLine("ERROR [804]: " + e.Message);
                 try { socket.Shutdown(SocketShutdown.Both); } catch { }
                 try { socket.Close(); } catch { }
                 isConnected = false;
@@ -131,7 +133,7 @@ namespace Dreadline_Gate_Server
                 try
                 {
                     byte[] buff = new byte[socket.ReceiveBufferSize];
-                    socket.Receive(buff, 0, buff.Length, SocketFlags.None);
+                    socket.Receive(buff);
                     string message = Encoder.Genarate(buff);
                     message = message.Split('|')[0];
                     if (!message.Equals(""))
@@ -140,8 +142,9 @@ namespace Dreadline_Gate_Server
                         Encoder.Decode(this, message);
                     }
                 }
-                catch
+                catch(Exception e)
                 {
+                    Console.WriteLine("ERROR[805]: " + e.Message);
                     try { socket.Shutdown(SocketShutdown.Both); } catch { }
                     try { socket.Close(); } catch { }
                     isConnected = false;
@@ -157,8 +160,9 @@ namespace Dreadline_Gate_Server
                 {
                     socket.Send(Encoder.Genarate(""));
                 }
-                catch
+                catch (Exception e)
                 {
+                    Console.WriteLine("ERROR [806]: " + e.Message);
                     try { socket.Shutdown(SocketShutdown.Both); } catch { }
                     try { socket.Close(); } catch { }
                     isConnected = false;
